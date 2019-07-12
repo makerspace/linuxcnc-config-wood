@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pyvcp>
+<!-- 
+Include your PyVCP panel here.
+The contents of this file will not be overwritten when you run stepconf again.
+-->
+  <hbox>
+    <relief>RAISED</relief>
+    <bd>5</bd>			
+    <button> 
+      <halpin>"laserzero"</halpin>
+      <text>"Z Touch Plate"</text>
+      <font>('Fixed',14)</font>
+      <width>10</width>
+    </button>
+  </hbox>
+</pyvcp>

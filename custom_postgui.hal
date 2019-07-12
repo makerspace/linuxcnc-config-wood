@@ -1,2 +1,5 @@
 # Include your custom_postgui HAL commands here
 # This file will not be overwritten when you run PNCconf again
+
+# set up the touch plate button
+net remote-laserzero halui.mdi-command-01 <= pyvcp.laserzero
