@@ -1,5 +1,73 @@
 # Include your custom_postgui HAL commands here
 # This file will not be overwritten when you run PNCconf again
 
-# set up the touch plate button
-net remote-laserzero halui.mdi-command-01 <= pyvcp.laserzero
+#Dammsugare
+
+# Create OR signals
+loadrt or2 names=or2_D,or2_T
+loadrt message names=Spindle_message messages="Spindle error! try turning 400v off for 20s"
+
+#loadrt not
+addf and2.0 servo-thread
+addf and2.1 servo-thread
+addf and2.2 servo-thread
+addf and2.3 servo-thread
+addf and2.4 servo-thread
+addf or2_D servo-thread
+addf or2_T servo-thread
+addf not.0 servo-thread
+addf Spindle_message servo-thread
+ 
+#Tryckluft
+net spindle-enable and2.4.in0 
+net TB-Auto and2.4.in1 <= pyvcp.TMultilabel.legend2 <= pyvcp.ButtonTryckluft.Auto 
+net TryckluftAutoOn and2.4.out or2_T.in1 
+net TB-on pyvcp.ButtonTryckluft.On => pyvcp.TMultilabel.legend0 => or2_T.in0 
+net TrycklyftIsOn or2_T.out => pyvcp.led_Tryckluft => hm2_7i76e.0.7i76.0.0.output-00
+
+
+net DammsugareOn pyvcp.DMultilabel.legend0 
+
+net 400V.is-off and2.2.in0 
+net DB-on and2.2.in1 
+net 400v-R pyvcp.DMultilabel.legend1 and2.2.out
+
+net DB-Auto pyvcp.DMultilabel.legend2
+net DB-Off pyvcp.ButtonDammsugare.Off pyvcp.DMultilabel.legend3
+
+net 400V.is-on and2.0.in0 
+net DB-on and2.0.in1 <= pyvcp.ButtonDammsugare.On
+net DammsugareOn and2.0.out 
+
+net spindle-enable and2.1.in0 pyvcp.led_spindle
+net DB-Auto and2.1.in1 <= pyvcp.ButtonDammsugare.Auto
+net DammsugareAutoOn and2.1.out
+
+net DammsugareOn or2_D.in0 
+net DammsugareAutoOn or2_D.in1 
+net DammsugareIsOn or2_D.out => pyvcp.led_Dammsugare => hm2_7i76e.0.7i76.0.0.output-10
+
+net 400V.is-on and2.3.in0 
+net Spindle_not_redy  and2.3.in1 <= hm2_7i76e.0.7i76.0.0.input-28
+net Spindle_error and2.3.out Spindle_message.trigger spindle.0.amp-fault-in pyvcp.SMultilabel.legend1
+net 400V.is-off pyvcp.SMultilabel.legend0
+
+#Display spindle speed < spindle_min = spindle_min
+loadrt limit2 count=1
+addf limit2.0 servo-thread
+net spindle_max => limit2.0.max => 
+net spindle-vel-cmd-rpm-abs limit2.0.in pyvcp.my-number-r
+loadrt mux2 count=1
+addf mux2.0 servo-thread
+net spindle-enable => mux2.0.sel 
+net spindle_min => mux2.0.in1 => 
+net spindle_limit mux2.0.out => limit2.0.min 
+net Display_spindle limit2.0.out => pyvcp.my-bar 
+
+sets spindle_min 6000
+sets spindle_max 24000
+setp limit2.0.maxv 10000
+
+net ztouch halui.mdi-command-00 <= pyvcp.ztouch 
+
+

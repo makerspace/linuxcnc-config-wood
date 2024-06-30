@@ -10,22 +10,34 @@ setp    hm2_7i76e.0.watchdog.timeout_ns 5000000
 loadrt pid names=pid.x,pid.y,pid.y2,pid.z,pid.s
 loadrt abs names=abs.spindle
 loadrt lowpass names=lowpass.spindle
+# Create AND signals. Some of these are only used in the custom_postgui.hal file
+loadrt and2 names=and2.0,and2.1,and2.2,and2.3,and2.4,and_estop,and_probe
+loadrt not
 
-addf hm2_7i76e.0.read          servo-thread
+addf and_estop                servo-thread
+addf and_probe                servo-thread
+addf hm2_7i76e.0.read         servo-thread
 addf motion-command-handler   servo-thread
 addf motion-controller        servo-thread
 addf pid.x.do-pid-calcs       servo-thread
 addf pid.y.do-pid-calcs       servo-thread
-addf pid.y2.do-pid-calcs       servo-thread
+addf pid.y2.do-pid-calcs      servo-thread
 addf pid.z.do-pid-calcs       servo-thread
 addf pid.s.do-pid-calcs       servo-thread
 addf abs.spindle              servo-thread
 addf lowpass.spindle          servo-thread
-addf hm2_7i76e.0.write         servo-thread
+addf hm2_7i76e.0.write        servo-thread
 setp hm2_7i76e.0.dpll.01.timer-us -50
 setp hm2_7i76e.0.stepgen.timer-number 1
 
 # external output signals
+
+# --- FAULT SIGNAL ---
+net x-fault joint.0.amp-fault-in   <=  hm2_7i76e.0.7i76.0.0.input-08
+net z-fault joint.3.amp-fault-in   <=  hm2_7i76e.0.7i76.0.0.input-11
+
+net y-l-fault joint.1.amp-fault-in <= hm2_7i76e.0.7i76.0.0.input-09
+net y-r-fault joint.2.amp-fault-in <= hm2_7i76e.0.7i76.0.0.input-10
 
 
 # --- ESTOP-OUT ---
@@ -33,6 +45,9 @@ net estop-out hm2_7i76e.0.7i76.0.0.output-07
 
 # external input signals
 
+# --- 400V ---
+net 400V.is-on    motion.enable <=  hm2_7i76e.0.7i76.0.0.input-25-not
+net 400V.is-off  <=  hm2_7i76e.0.7i76.0.0.input-25
 
 # --- MIN-HOME-X ---
 net min-home-x     <=  hm2_7i76e.0.7i76.0.0.input-00
@@ -41,13 +56,14 @@ net min-home-x     <=  hm2_7i76e.0.7i76.0.0.input-00
 net min-home-y     <=  hm2_7i76e.0.7i76.0.0.input-01
 
 # --- MIN-HOME-Y2 ---
-net min-home-y2     <=  hm2_7i76e.0.7i76.0.0.input-02
+net min-home-y2     <=  hm2_7i76e.0.7i76.0.0.input-29
 
 # --- MAX-HOME-Z ---
 net max-home-z     <=  hm2_7i76e.0.7i76.0.0.input-03
 
 # --- PROBE-IN ---
-net probe-in     <=  hm2_7i76e.0.7i76.0.0.input-15
+net z-probe-e-stop <= hm2_7i76e.0.7i76.0.0.input-16
+net probe-in     <=  hm2_7i76e.0.7i76.0.0.input-17-not
 
 # --- ESTOP-EXT ---
 net estop-ext     <=  hm2_7i76e.0.7i76.0.0.input-24
@@ -273,6 +289,18 @@ net spindle-vel-cmd-rpm     => pid.s.command
 net spindle-vel-fb-rpm      => pid.s.feedback
 net spindle-output        <=  pid.s.output
 
+# ---digital potentionmeter output signals/setup---
+
+setp   hm2_7i76e.0.7i76.0.0.spinout-minlim    [SPINDLE_9]OUTPUT_MIN_LIMIT
+setp   hm2_7i76e.0.7i76.0.0.spinout-maxlim    [SPINDLE_9]OUTPUT_MAX_LIMIT
+setp   hm2_7i76e.0.7i76.0.0.spinout-scalemax  [SPINDLE_9]OUTPUT_SCALE
+
+#net spindle-output      => hm2_7i76e.0.7i76.0.0.spinout
+net spindle-vel-cmd-rpm  => hm2_7i76e.0.7i76.0.0.spinout
+net spindle-enable      => hm2_7i76e.0.7i76.0.0.spinena
+net spindle-ccw         => hm2_7i76e.0.7i76.0.0.spindir
+
+
 # ---setup spindle control signals---
 
 net spindle-vel-cmd-rps        <=  spindle.0.speed-out-rps
@@ -330,7 +358,10 @@ net coolant-flood     <=  iocontrol.0.coolant-flood
 
 #  ---probe signal---
 
-net probe-in     =>  motion.probe-input
+net probe-in     =>  and_probe.in0
+net M64-and-in       motion.digital-out-00        and_probe.in1
+
+net probe_in_and_active    and_probe.out     =>  motion.probe-input
 
 #  ---motion control signals---
 
@@ -342,7 +373,14 @@ net machine-is-enabled        <=  motion.motion-enabled
 #  ---estop signals---
 
 net estop-out     <=  iocontrol.0.user-enable-out
-net estop-ext     =>  iocontrol.0.emc-enable-in
+
+net estop-ext => and_estop.in0
+net z-probe-e-stop => and_estop.in1
+net estop-all <= and_estop.out
+net estop-all =>  iocontrol.0.emc-enable-in
+# MANUAL RESET IN CASE ESTOP LOOP DOESNT BREAK, GHETTO SOLUTION, USE AT YOUR OWN RISK // Anonymous from Makerspace
+#net estop-ext => iocontrol.0.emc-enable-in
+
 
 #  ---manual tool change signals---
 
@@ -351,4 +389,5 @@ net tool-change-request     iocontrol.0.tool-change       =>  hal_manualtoolchan
 net tool-change-confirmed   iocontrol.0.tool-changed      <=  hal_manualtoolchange.changed
 net tool-number             iocontrol.0.tool-prep-number  =>  hal_manualtoolchange.number
 net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-prepared
+
 

@@ -4,14 +4,163 @@
 Include your PyVCP panel here.
 The contents of this file will not be overwritten when you run stepconf again.
 -->
+  <labelframe text="Vacuum">
+    <font>("Helvetica",12)</font>
+    <bd>5</bd>
+    <relief>RAISED</relief> 
+    <hbox>
+		 <led>
+			<halpin>"led_Dammsugare"</halpin>
+			<size>40</size>
+			<on_color>"green"</on_color>
+			<off_color>"red"</off_color>
+         </led>
+		 <multilabel>
+			<halpin>"DMultilabel"</halpin>
+			<legends>["On","400V required","Auto=Spindle","Off  "]</legends>
+			<font>("Helvetica", 10)</font>
+			<disable_pin>True</disable_pin>
+			<initval>0</initval> 
+		 </multilabel>
+    </hbox>
+    <hbox>
+		<radiobutton>
+			<choices>["Auto","On","Off"]</choices>
+			<halpin>"ButtonDammsugare"</halpin>        
+			<initval>0</initval>    
+			<orient>HORIZONTAL</orient>			
+			<relief>SUNKEN</relief> 
+		</radiobutton>
+    </hbox>
+  </labelframe>
+
+  <labelframe text="Compressed air">
+    <font>("Helvetica",12)</font>
+    <bd>5</bd>
+    <relief>RAISED</relief> 
+    <hbox>
+		 <led>
+			<halpin>"led_Tryckluft"</halpin>
+			<size>40</size>
+			<on_color>"green"</on_color>
+			<off_color>"red"</off_color>
+         </led>
+		 <multilabel>
+			<halpin>"TMultilabel"</halpin>
+			<legends>["On","400V required","Auto=Spindle","Off  "]</legends>
+			<font>("Helvetica", 10)</font>
+			<disable_pin>True</disable_pin>
+			<initval>0</initval> 
+		 </multilabel>
+    </hbox>
+    <hbox>
+		<radiobutton>
+			<choices>["Auto","On","Off"]</choices>
+			<halpin>"ButtonTryckluft"</halpin>        
+			<initval>2</initval>    
+			<orient>HORIZONTAL</orient>			
+			<relief>SUNKEN</relief> 
+		</radiobutton>
+    </hbox>
+  </labelframe>
+
+
+  <labelframe text="Spindle">
+    <font>("Helvetica",12)</font>
+    <bd>5</bd>
+    <relief>RAISED</relief> 
+    <hbox>
+		 <led>
+			<halpin>"led_spindle"</halpin>
+			<size>40</size>
+			<on_color>"green"</on_color>
+			<off_color>"red"</off_color>
+         	 </led>
+		 <multilabel>
+			<halpin>"SMultilabel"</halpin>
+			<legends>["","Spindle error! try turning 400v off for 20s"]</legends>
+			<font>("Helvetica", 10)</font>
+			<disable_pin>True</disable_pin>
+			<bg>"Yellow"</bg>
+			<initval>0</initval> 
+		 </multilabel>
+    </hbox>
+    <hbox>
+	<bar>
+		<halpin>"my-bar"</halpin>
+		<min_>0</min_>
+		<max_>24000</max_>
+		<bgcolor>"grey"</bgcolor>
+		<range1>(0,100,"green")</range1>
+		<range2>(101,129,"orange")</range2>
+		<range3>(130,150,"red")</range3>
+		<fillcolor>"green"</fillcolor>
+		<font>("Helvetica",1)</font>
+	</bar>
+   </hbox>   
+<!--    
+   <hbox>
+
+	<label>
+		<text>"min "</text>
+		<font>("Helvetica",10)</font>
+	</label>
+	<number> 
+	 	<halpin>"my-number-min"</halpin>
+		<font>("Helvetica",10)</font>
+		<format>"d"</format>
+	</number>
+        <label>
+                <text>"rpm "</text>
+                <font>("Helvetica",10)</font>
+        </label>
+   </hbox>          
+   <hbox>
+	<label>
+		<text>"max "</text>
+                <font>("Helvetica",10)</font>
+	</label>
+	<number> 
+		<halpin>"my-number-max"</halpin>
+		<font>("Helvetica",10)</font>
+		<format>"d"</format>
+	</number>
+       	<label>
+                <text>"rpm "</text>
+                <font>("Helvetica",10)</font>
+        </label>
+  </hbox>    -->     
   <hbox>
-    <relief>RAISED</relief>
-    <bd>5</bd>			
-    <button> 
-      <halpin>"laserzero"</halpin>
-      <text>"Z Touch Plate"</text>
-      <font>('Fixed',14)</font>
-      <width>10</width>
+	<label>
+		<text>"Requested speed"</text>
+                <font>("Helvetica",10)</font>
+	</label>
+	<number> 
+		<halpin>"my-number-r"</halpin>
+		<font>("Helvetica",10)</font>
+		<format>"d"</format>
+	</number>
+       	<label>
+                <text>"rpm "</text>
+                <font>("Helvetica",10)</font>
+	</label>
+  </hbox>              
+
+  </labelframe>
+  <labelframe text="Automatic Z touch probe">
+    <font>("Helvetica",12)</font>
+    <bd>5</bd>
+    <relief>RAISED</relief> 
+    <button>
+      <relief>RAISED</relief>
+      <bd>3</bd>
+      <halpin>"ztouch"</halpin>
+      <text>"Touch Off Z"</text>
+      <font>("Helvetica",16)</font>
     </button>
-  </hbox>
+  </labelframe>
+  
+
+   
+
 </pyvcp>
