@@ -318,7 +318,7 @@ net spindle-index-enable      <=>  spindle.0.index-enable
 
 # ---Setup spindle at speed signals---
 
-sets spindle-at-speed true
+net spindle-at-speed <= hm2_7i76e.0.7i76.0.0.input-26
 
 
 #******************************
