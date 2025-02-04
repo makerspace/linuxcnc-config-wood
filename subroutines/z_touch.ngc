@@ -1,7 +1,7 @@
 O <z_touch> sub
 ( See https://www.sdoherty.com/2020/04/using-z-probe-with-linuxcnc.html )
 #<ProbeThickness> = 67.65 ( Thickness of your touch plate when proving in the Z orientation, this is used to re-calculate your new zero after touching off )
-#<FastProbeSpeed> = 300 ( Probe speed used for your initial search, this should be a slow value to avoid damaging your tool, but doesn not need to "crawl"  )
+#<FastProbeSpeed> = 400 ( Probe speed used for your initial search, this should be a slow value to avoid damaging your tool, but doesn not need to "crawl"  )
 #<SlowProbeSpeed> = 5 ( Probe speed for the final search, this should be a very slow value to improve the accuracy of the probing )
 #<ZProberange> = -80 ( Distance the probe will travel on its initial search before erroring out, should be a negative value )
 #<ProbeLift> = 0.2 ( Distance the probe will lift off the touch plate prior to starting the second search )
@@ -9,7 +9,7 @@ O <z_touch> sub
 
 G90                    (switch to absolute coordinates)
 G28.1                  (store current machine coordinates)
-g53 G0 Z-10            (move almost to the top)
+g53 G0 Z0            (move almost to the top)
 g53 G0 X820 Y9.0       (move to predefined coordinates for probe)
 
 G10 L20 P0 Z0		(set current Z = 0)
@@ -37,7 +37,7 @@ G10 L20 P0 Z[#<ProbeThickness>]
 
 G90			(switch to absolute coordinates)
 
-G53 g0 z-10
+G53 g0 z0
 G91
 G28 X0 Y0                  (move to the original xy coordinates)
 G28 X0 Y0 Z0                 (move to the original z coordinate)
