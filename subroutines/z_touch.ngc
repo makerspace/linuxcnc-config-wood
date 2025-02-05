@@ -10,7 +10,7 @@ O <z_touch> sub
 G90                    (switch to absolute coordinates)
 G28.1                  (store current machine coordinates)
 g53 G0 Z0            (move almost to the top)
-g53 G0 X820 Y9.0       (move to predefined coordinates for probe)
+g53 G0 X831 Y15.0       (move to predefined coordinates for probe)
 
 G10 L20 P0 Z0		(set current Z = 0)
 G91			(switch to relative coordinates)
