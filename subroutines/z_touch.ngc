@@ -3,7 +3,7 @@ O <z_touch> sub
 #<ProbeThickness> = 76.94 ( Thickness of your touch plate when proving in the Z orientation, this is used to re-calculate your new zero after touching off )
 #<FastProbeSpeed> = 400 ( Probe speed used for your initial search, this should be a slow value to avoid damaging your tool, but doesn not need to "crawl"  )
 #<SlowProbeSpeed> = 5 ( Probe speed for the final search, this should be a very slow value to improve the accuracy of the probing )
-#<ZProberange> = -80 ( Distance the probe will travel on its initial search before erroring out, should be a negative value )
+#<ZProberange> = -83 ( Distance the probe will travel on its initial search before erroring out, should be a negative value )
 #<ProbeLift> = 0.2 ( Distance the probe will lift off the touch plate prior to starting the second search )
 #<ProbeRetract> = 10.00   ( Distance the probe will lift from the touch plate after succesful probing to allow for removal of the plate )
 
