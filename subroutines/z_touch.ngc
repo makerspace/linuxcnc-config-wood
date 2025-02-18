@@ -7,6 +7,7 @@ O <z_touch> sub
 #<ProbeLift> = 0.2 ( Distance the probe will lift off the touch plate prior to starting the second search )
 #<ProbeRetract> = 10.00   ( Distance the probe will lift from the touch plate after succesful probing to allow for removal of the plate )
 
+M49 (disable feed rate override controls)
 G90                    (switch to absolute coordinates)
 G28.1                  (store current machine coordinates)
 g53 G0 Z0            (move almost to the top)
@@ -42,6 +43,7 @@ G91
 G28 X0 Y0                  (move to the original xy coordinates)
 G28 X0 Y0 Z0                 (move to the original z coordinate)
 G90
+M48 (enable feed rate override)
 O <z_touch> endsub
 
 
