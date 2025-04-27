@@ -9,6 +9,12 @@ xmax = 850
 ymax = 885
 stepover = 42
 
+xy_machine_limit_margin = 1
+xmin = xy_machine_limit_margin
+ymin = xy_machine_limit_margin
+ymax -= xy_machine_limit_margin
+xmax -= xy_machine_limit_margin
+
 z_probe_x = 831
 z_probe_y = 15
 z_probe_horizontal_margin = 130
@@ -57,7 +63,7 @@ if mode == "vacuum":
 print("N45 G64 P5.0 Q5.0") # Set blending tolerance
 print("G21") # Set units to mm
 print("G90") # Set to absolute positioning
-print("G53 G0 x0 y0") # Move to start position
+print(f"G53 G0 x{xmin} y{ymin}") # Move to start position
 
 # Start up sindle
 print(f"M03 s{spindle_rpm}")
@@ -67,10 +73,10 @@ print("G4 P5")
 print(f"G1 z{z_feed} F{z_speed}")
 
 x = 0
-for i in range(0, ymax+stepover, stepover):
+for i in range(ymin, ymax+stepover, stepover):
     i = min(i, ymax)
     mx = xmax
-    if i > z_probe_y - z_probe_horizontal_margin and i < z_probe_y + z_probe_horizontal_margin:
+    if avoid_probe and i > z_probe_y - z_probe_horizontal_margin and i < z_probe_y + z_probe_horizontal_margin:
         mx = z_probe_x - z_probe_horizontal_margin
 
     print(f"G53 G1 y{i} F{speed}")
@@ -78,24 +84,24 @@ for i in range(0, ymax+stepover, stepover):
         print(f"G53 G1 x{mx} F{speed}")
         x = 1
     else:
-        print(f"G53 G1 x0 F{speed}")
+        print(f"G53 G1 x{xmin} F{speed}")
         x = 0
 
 
 if perpendicular_pass:
     # Perpendicular pass
     print(f"G1 z{z_retract} F{z_speed}")
-    print(f"G53 G0 x0 y0")
+    print(f"G53 G0 x{xmin} y{ymin}")
     print(f"G1 z{z_feed} F{z_speed}")
     y = 0
-    for i in range(0, xmax+stepover, stepover):
+    for i in range(xmin, xmax+stepover, stepover):
         i = min(i, xmax)
         print(f"G53 G1 x{i} F{speed}")
         if y == 0:
             print(f"G53 G1 x{i} y{ymax} F{speed}")
             y = 1
         else:
-            print(f"G53 G1 x{i} y0 F{speed}")
+            print(f"G53 G1 x{i} y{ymin} F{speed}")
             y = 0
 
 # Stop spindle
